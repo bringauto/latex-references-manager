@@ -22,7 +22,36 @@
 }
 \makeatother
 
+\newcommand{\createextref}[2]{%
+  \expandafter\def\csname erefurl-#1\endcsname{#2}%
+}
+
+\newcommand{\getextref}[1]{\csname erefurl-#1\endcsname}
+\makeatother
+
+% Helper to print an external reference as a clickable link or \url
+\makeatletter
+\newcommand{\printextref}[1]{%
+  \expandafter\ifx\csname erefurl-#1\endcsname\relax
+    \PackageWarning{reference-lib}{External reference `#1' undefined}%
+  \else
+    \begingroup
+      \edef\@tempa{\csname erefurl-#1\endcsname}%
+      \@ifundefined{href}{%
+        \@ifundefined{url}{%
+          \@tempa
+        }{%
+          \url{\@tempa}%
+        }%
+      }{%
+        \href{\@tempa}{\@tempa}%
+      }%
+    \endgroup
+  \fi
+}
+\makeatother
 
 \input{references.tex}
+
 
 

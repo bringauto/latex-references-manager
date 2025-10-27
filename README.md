@@ -1,50 +1,39 @@
 # LaTeX Reference Manager
 
-This tool streamlines the creation and management of documentation in LaTeX. It simplifies the handling of cross-references between generated documents.
+LaTeX Reference Manager provides a small, Makefile-driven helper for creating and managing cross-document references in LaTeX projects. It makes it easy to reference PDFs produced by other projects and to manage external links (web pages, externally hosted PDFs, etc.).
 
-## Installation
+## Quick start
 
-This tool requires **PDFLaTeX** to generate PDF files and custom LaTeX macros for managing references. To install the required tools on Debian-based systems, run:
+Prerequisites:
+
+- A TeX distribution with PDFLaTeX (for Debian/Ubuntu a convenient option is `texlive-full`).
+- GNU Make.
+
+Install system packages (Debian/Ubuntu):
 
 ```bash
-sudo apt-get install texlive-full
+sudo apt-get install texlive-full make
 ```
 
-Ensure your system includes `make`, as it is used to manage the build process.
-
-## Using LaTeX Reference Manager
-
-### Add LaTeX Reference Manager to Your Project
-
-Add the repository as a submodule to your project:
+Add the manager to your project (recommended as a git submodule):
 
 ```bash
 git submodule add git@github.com:bringauto/latex-references-manager.git
 ```
 
-Initialize the LaTeX Reference Manager by calling the `init_manager` target in the `latex-references-manager/Makefile`. Preferably, run:
+Initialize the manager from the repository root:
 
 ```bash
 make -C latex-references-manager init_manager
 ```
 
-If the LaTeX Reference Manager is not included as a submodule in the root of your project, you will need to configure two variables, `INIT_DIR` and `LIB_PATH`, during the initialization process. These variables specify the relative paths required to properly set up the manager.
+If you keep the manager in a non-standard location, pass `INIT_DIR` and `LIB_PATH` to `init_manager` (see example below).
 
-#### Example Configuration
+## Example project Makefile
 
-For instance, if the LaTeX Reference Manager resides in a subdirectory of your project (e.g., `another_dir/latex-references-manager`), you can initialize it using the following command:
+Reuse the `Makefile` in `example/` by including `Makefile.common` from the repository root. A minimal project Makefile looks like this:
 
-```bash
-make -C another_dir/latex-references-manager init_manager INIT_DIR=../../ LIB_PATH=another_dir/latex-references-manager/
-```
-
-This command creates symbolic links (symlinks) to the files in the LaTeX Reference Manager, making them accessible from the root of your project. This setup ensures that all cross-references, bibliography files, and other resources function seamlessly, regardless of where the manager is located within your project structure.
-
-### Create a Project and Use It with LaTeX Reference Manager
-
-When creating a new project, reuse the Makefile located in the example directory.
-
-```sh
+```make
 PROJECT_NAME := example
 REPO_ROOT_DIR := ../
 
@@ -53,65 +42,99 @@ include $(REPO_ROOT_DIR)/Makefile.common
 $(eval $(call COMMON_LOGIC, $(PROJECT_NAME), $(REPO_ROOT_DIR)))
 ```
 
- In this Makefile, set `PROJECT_NAME` to the name of your project (the name of the main `.tex` file without the `.tex` extension) and `REPO_ROOT_DIR` to the relative path to the root directory of your project. This Makefile includes logic from `Makefile.common` in your root directory, enabling you to build your project with the LaTeX Reference Manager. It also includes `clean` and `cleanall` targets.
+Set `PROJECT_NAME` to your main `.tex` filename (without `.tex`) and `REPO_ROOT_DIR` to the path to the repository root.
 
-If you want to add more targets to your Makefile, you can, but for building, you should use the targets provided in `Makefile.common`. Otherwise, the LaTeX Reference Manager might not work properly.
+## Initialization options and example
 
-To build your project, use the `make` command in the project directory. If you want to build multiple documents at once, it is recommended to create a Makefile in the root of the entire project and call `make -C path_to_project` for each project from this Makefile.
+If the manager lives under `another_dir/latex-references-manager` inside your repo, initialize like this:
 
 ```bash
-make # Build the project
-make clean # Clean the project temporary files
-make cleanall # Clean the project temporary files and output PDF
+make -C another_dir/latex-references-manager init_manager INIT_DIR=../../ LIB_PATH=another_dir/latex-references-manager/
 ```
 
-### Use References Between Projects
+This creates symlinks from the project root so `Makefile.common` and the LaTeX library files are accessible.
 
-#### Create a Record in the `references.tex` File
+## Using references between projects
 
-To use the LaTeX Reference Manager in your project for managing references, add a record for each document you want to reference in the `references.tex` file located in the root of your project. The record should follow this format:
+1. Add a record for each external document in the root `references.tex` file. For a local PDF built by another project use:
 
 ```latex
-\createref{name_of_reference}{path_to_output_pdf}
+\createref{document1}{path/to/output}
 ```
 
-where:
+`path/to/output` is relative to the repository root and should point to the PDF output path without the `.pdf` extension.
 
-- `name_of_reference` is the name you will use to reference this document in your project.
-- `path_to_output_pdf` is the path to the output PDF file of this document relative to the root of your project, in the format `path/to/output` (without the `.pdf` extension).
-
-#### Use References in Your Project
-
-To use references in your project, include the following line in your main `.tex` file:
+1. Include the helper macros in your document:
 
 ```latex
 \input{references_lib/references_lib.tex}
 ```
 
-This includes the LaTeX macros necessary for using references in your project. It works only when you use the provided `Makefile.common` to build your project, as it modifies the `TEXINPUTS` variable to include files from the root of your project.
-
-To create a specific reference, use the `\getref{name_of_reference}` macro in your project. For example, to create a link to a document with the reference `document1`, use:
+1. Use a registered reference in your document:
 
 ```latex
 \href{\getref{document1}}{Link to document1.pdf}
 ```
 
-#### LaTeX Reference Manager Configuration
+## External references (web pages and remote PDFs)
 
-To configure the LaTeX Reference Manager, use the `references_config.tex` file in the root of your project. You can set the following:
+You can register and use external URLs (web pages, externally hosted PDFs) using `\createextref` and `\getextref`.
 
-- **Output Mode:**  
-  Switch between `pdf` and `html` modes by updating:
+Register an external reference in `references.tex`:
 
-  ```latex
-  \pdfhtmlmode{pdf} % or \pdfhtmlmode{html}
-  ```
+```latex
+\createextref{bringauto}{https://bringauto.com}
+```
 
-- **HTML Prefix:**  
-  When generating HTML output, define the base URL prefix:
+Use it in your document:
 
-  ```latex
-  \def\htmlprefix{https://bringauto.com/en/}
-  ```
+```latex
+\href{\getextref{bringauto}}{Bringauto homepage}
+% or
+\url{\getextref{bringauto}}
+```
 
-**Note:** HTML output is currently not supported. Implementing this feature will require `latexml` or similar tools.
+Notes and tips:
+
+- Always include the URL scheme (`http://` or `https://`) when registering an external reference.
+- `\getextref{<name>}` returns the registered URL and can be used with `\href`, `\url` or other link macros.
+- URLs are not validated at build time; if a link is broken, update `references.tex` accordingly.
+- If a URL contains LaTeX-sensitive characters, prefer `\url{\getextref{...}}` or escape as needed.
+
+## Configuration
+
+Edit `references_config.tex` at the repository root to change behavior:
+
+- Toggle output mode (pdf/html):
+
+```latex
+\pdfhtmlmode{pdf} % or \pdfhtmlmode{html}
+```
+
+- Set HTML prefix (used when HTML support is implemented):
+
+```latex
+\def\htmlprefix{https://bringauto.com/en/}
+```
+
+Note: HTML output is currently not supported; implementing it requires tools such as `latexml`.
+
+## Build and test
+
+To build the example project in `example/`:
+
+```bash
+make -C example
+```
+
+Use `make -C example clean` to remove temporary files, or `make -C example cleanall` to also remove the generated PDF.
+
+## Troubleshooting
+
+- If your references do not resolve, check that `references.tex` entries use correct names and paths.
+- For external links, verify the URL scheme and encoding.
+- If LaTeX cannot find `references_lib/references_lib.tex` ensure you ran `init_manager` or that `TEXINPUTS` is configured by your top-level Makefile.
+
+## License
+
+This project is provided under the terms of the LICENSE file in the repository root.
