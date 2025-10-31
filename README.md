@@ -46,13 +46,28 @@ Set `PROJECT_NAME` to your main `.tex` filename (without `.tex`) and `REPO_ROOT_
 
 ## Initialization options and example
 
-If the manager lives under `another_dir/latex-references-manager` inside your repo, initialize like this:
+When using the manager, you can customize:
+
+- where you put the submodule in the first place,
+- where you want to create files or symlinks for the manager in your project (via the `INIT_DIR` variable).
+- whether you want to create symlink to the `references.tex` file in the repository.
+
+Assume the following:
+
+- The submodule directory is `another_dir/latex-references-manager` inside your repository.
+- You want to create the manager files/symlinks inside `another_dir/` (so the another_dir will contain `Makefile.common`, `references_lib/` etc.).
+- You want to create a symlink to the `references.tex` file in the repository root.
+
+Then initialize the manager by running:
 
 ```bash
 make -C another_dir/latex-references-manager init_manager INIT_DIR=../../ LIB_PATH=another_dir/latex-references-manager/
 ```
 
 This creates symlinks from the project root so `Makefile.common` and the LaTeX library files are accessible.
+
+> [!NOTE]
+> To avoid creating the symlink to `references.tex`, use `init_no_ref` instead of `init_manager`:
 
 ## Using references between projects
 
