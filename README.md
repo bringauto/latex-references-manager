@@ -24,10 +24,10 @@ git submodule add git@github.com:bringauto/latex-references-manager.git
 Initialize the manager from the repository root:
 
 ```bash
-make -C latex-references-manager init_manager
+make -C latex-references-manager init
 ```
 
-If you keep the manager in a non-standard location, pass `INIT_DIR` and `LIB_PATH` to `init_manager` (see example below).
+For more initialization options, see the [Initialization options and example](#initialization-options-and-example) section below.
 
 ## Example project Makefile
 
@@ -61,7 +61,7 @@ Assume the following:
 Then initialize the manager by running:
 
 ```bash
-make -C another_dir/subdir/latex-references-manager init_manager INIT_DIR=../../
+make -C another_dir/subdir/latex-references-manager init INIT_DIR=../../
 ```
 
 This creates symlinks from the project root so `Makefile.common` and the LaTeX library files are accessible.
@@ -69,7 +69,7 @@ This creates symlinks from the project root so `Makefile.common` and the LaTeX l
 See, that the `INIT_DIR` is relative to the submodule (`latex-references-manager`) itself.
 
 > [!NOTE]
-> To avoid creating the symlink to `references.tex`, use `init_no_ref` instead of `init_manager`:
+> To avoid creating the symlink to `references.tex`, use `init-no-ref` target instead of `init`.
 
 ## Using references between projects
 

@@ -1,3 +1,5 @@
+SHELL = /bin/sh
+
 TMP_DIR := _tmp
 MAKEFILE_COMMON := Makefile.common
 REFERENCES = references.tex
@@ -7,16 +9,16 @@ EXAMPLE = example
 LIB_PATH = latex-references-manager/
 INIT_DIR = ../
 
-init_manager: init_no_ref link_ref
+init: init-no-ref link-ref
 
-init_no_ref:
+init-no-ref:
 	echo "Initializing library"
 	ln -sf $(LIB_PATH)$(MAKEFILE_COMMON) $(INIT_DIR)$(MAKEFILE_COMMON)
 	ln -sf $(LIB_PATH)$(REFERENCES_LIB) $(INIT_DIR)$(REFERENCES_LIB);
 	cp -n $(REFERENCES_CONFIG) $(INIT_DIR)$(REFERENCES_CONFIG)
 	ln -sf $(LIB_PATH)$(EXAMPLE) $(INIT_DIR)$(EXAMPLE)
 
-link_ref:
+link-ref:
 	@echo "Linking references file"
 	ln -sf $(LIB_PATH)$(REFERENCES) $(INIT_DIR)$(REFERENCES)
 
