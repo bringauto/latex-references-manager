@@ -68,9 +68,6 @@ This creates symlinks from the project root so `Makefile.common` and the LaTeX l
 
 See, that the `INIT_DIR` is relative to the submodule (`latex-references-manager`) itself.
 
-> [!NOTE]
-> To avoid creating the symlink to `references.tex`, use `init-no-ref` target instead of `init`.
-
 ## Using references between projects
 
 1. Add a record for each external document in the root `references.tex` file. For a local PDF built by another project use:
