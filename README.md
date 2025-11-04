@@ -122,7 +122,7 @@ Edit `references_config.tex` at the repository root to change behavior:
 - Toggle output mode (pdf/html):
 
 ```latex
-\pdfhtmlmode{pdf} % or \pdfhtmlmode{html}
+\def\pdfhtmlmode{pdf} % or \pdfhtmlmode{html}
 ```
 
 - Set HTML prefix (used when HTML support is implemented):
