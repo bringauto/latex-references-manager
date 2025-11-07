@@ -115,6 +115,19 @@ Notes and tips:
 - URLs are not validated at build time; if a link is broken, update `references.tex` accordingly.
 - If a URL contains LaTeX-sensitive characters, prefer `\url{\getextref{...}}` or escape as needed.
 
+## Reference naming and path requirements
+
+### Reference naming rules
+
+- Use only alphanumeric characters and underscores
+- Names are case-sensitive
+
+### Path requirements
+
+- Must be relative to project root
+- Cannot contain spaces or special characters
+- Forward slashes must be used as path separators
+
 ## Configuration
 
 Edit `references_config.tex` at the repository root to change behavior:
@@ -122,7 +135,7 @@ Edit `references_config.tex` at the repository root to change behavior:
 - Toggle output mode (pdf/html):
 
 ```latex
-\def\pdfhtmlmode{pdf} % or \pdfhtmlmode{html}
+\def\pdfhtmlmode{pdf} % or \dev\pdfhtmlmode{html}
 ```
 
 - Set HTML prefix (used when HTML support is implemented):
@@ -147,7 +160,7 @@ Use `make -C example clean` to remove temporary files, or `make -C example clean
 
 - If your references do not resolve, check that `references.tex` entries use correct names and paths.
 - For external links, verify the URL scheme and encoding.
-- If LaTeX cannot find `references_lib/references_lib.tex` ensure you ran `init_manager` or that `TEXINPUTS` is configured by your top-level Makefile.
+- If LaTeX cannot find `references_lib/references_lib.tex` ensure you ran `init` or that `TEXINPUTS` is configured by your top-level Makefile.
 
 ## License
 

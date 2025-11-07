@@ -11,12 +11,16 @@ all: $(PROJECT_NAME)
 $(PROJECT_NAME): $(DOC_FILE)
 	mkdir -p $(TMP_DIR)
 	TEXINPUTS=$(REPO_ROOT_DIR): pdflatex -interaction=nonstopmode -halt-on-error -output-directory=$(TMP_DIR) '\def\reporoot{$(REPO_ROOT_DIR)} \input{$(DOC_FILE)}' || (rm -f $(TMP_DIR)/$(DOC_FILE:.tex=.pdf) && false)
+	
 	# run biber if generated
 	if [ -f $(TMP_DIR)/$(PROJECT_NAME).bcf ]; then (cd $(TMP_DIR) && biber $(PROJECT_NAME)); fi
-	# fallback to bibtex if .aux exists
-	if [ -f $(TMP_DIR)/$(PROJECT_NAME).aux ]; then (cd $(TMP_DIR) && bibtex $(PROJECT_NAME) || true); fi
+	
+	# fallback to bibtex only when biber didn't run (no .bcf) and .aux exists
+	if [ ! -f $(TMP_DIR)/$(PROJECT_NAME).bcf ] && [ -f $(TMP_DIR)/$(PROJECT_NAME).aux ]; then (cd $(TMP_DIR) && bibtex $(PROJECT_NAME) || true); fi
+	
 	# run makeindex if index file produced
 	if [ -f $(TMP_DIR)/$(PROJECT_NAME).idx ]; then (cd $(TMP_DIR) && makeindex $(PROJECT_NAME) || true); fi
+
 	# run two additional pdflatex passes to resolve references and TOC
 	TEXINPUTS=$(REPO_ROOT_DIR): pdflatex -interaction=nonstopmode -output-directory=$(TMP_DIR) '\def\reporoot{$(REPO_ROOT_DIR)} \input{$(DOC_FILE)}' || (rm -f $(TMP_DIR)/$(DOC_FILE:.tex=.pdf) && false)
 	TEXINPUTS=$(REPO_ROOT_DIR): pdflatex -interaction=nonstopmode -output-directory=$(TMP_DIR) '\def\reporoot{$(REPO_ROOT_DIR)} \input{$(DOC_FILE)}' || (rm -f $(TMP_DIR)/$(DOC_FILE:.tex=.pdf) && false)
