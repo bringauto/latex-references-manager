@@ -1,0 +1,29 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc} 
+\usepackage{amsmath}       
+\usepackage{graphicx}      
+\usepackage{hyperref}      
+
+\input{references_lib/references_lib.tex}
+
+
+\title{Example document} 
+\author{Bringauto}         
+\date{\today}              
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+\begin{itemize}
+    % Reference to itself
+    \item \href{\getref{example}}{Example link}
+    
+    \item \url{\getextref{bringauto}}
+\end{itemize}
+
+
+\end{document}
