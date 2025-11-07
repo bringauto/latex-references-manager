@@ -24,10 +24,10 @@ git submodule add git@github.com:bringauto/latex-references-manager.git
 Initialize the manager from the repository root:
 
 ```bash
-make -C latex-references-manager init_manager
+make -C latex-references-manager init
 ```
 
-If you keep the manager in a non-standard location, pass `INIT_DIR` and `LIB_PATH` to `init_manager` (see example below).
+For more initialization options, see the [Initialization options and example](#initialization-options-and-example) section below.
 
 ## Example project Makefile
 
@@ -46,13 +46,27 @@ Set `PROJECT_NAME` to your main `.tex` filename (without `.tex`) and `REPO_ROOT_
 
 ## Initialization options and example
 
-If the manager lives under `another_dir/latex-references-manager` inside your repo, initialize like this:
+When using the manager, you can customize:
+
+- where you put the submodule in the first place,
+- where you want to create files or symlinks for the manager in your project (via the `INIT_DIR` variable).
+- whether you want to create symlink to the `references.tex` file in the repository.
+
+Assume the following:
+
+- The submodule directory is `another_dir/subdir/latex-references-manager` inside your repository.
+- You want to create the manager files/symlinks inside `another_dir/` (so the `another_dir` will contain `Makefile.common`, `references_lib/` etc.).
+- You want to create a symlink to the `references.tex` file in the repository root.
+
+Then initialize the manager by running:
 
 ```bash
-make -C another_dir/latex-references-manager init_manager INIT_DIR=../../ LIB_PATH=another_dir/latex-references-manager/
+make -C another_dir/subdir/latex-references-manager init INIT_DIR=../../
 ```
 
 This creates symlinks from the project root so `Makefile.common` and the LaTeX library files are accessible.
+
+See, that the `INIT_DIR` is relative to the submodule (`latex-references-manager`) itself.
 
 ## Using references between projects
 
@@ -108,7 +122,7 @@ Edit `references_config.tex` at the repository root to change behavior:
 - Toggle output mode (pdf/html):
 
 ```latex
-\pdfhtmlmode{pdf} % or \pdfhtmlmode{html}
+\def\pdfhtmlmode{pdf} % or \pdfhtmlmode{html}
 ```
 
 - Set HTML prefix (used when HTML support is implemented):
